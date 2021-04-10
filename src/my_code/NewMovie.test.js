@@ -2,14 +2,24 @@ import React from "react";
 import { render, cleanup, fireEvent } from "@testing-library/react";
 import NewMovie from "./NewMovie";
 
+// snapshot testing takes the result of your code and tests to see if it
+// is equivilent to a 'snapshot' of sorts.
+
 afterEach(cleanup);
 
 test("<NewMovie/> 1", () => {
-	const { debug, getByTestId } = render(<NewMovie />);
+  const { debug, getByTestId, queryByTestId, container, getByText } = render(
+    <NewMovie />
+  );
 
-	debug();
+  const pageTitle = getByTestId("page-title");
 
-	const newMovieText = getByTestId("newMovieId");
+  expect(pageTitle.textContent).toBe("New Movie");
+  expect(queryByTestId("movie-form")).toBeTruthy();
+  expect(container.firstChild).toMatchSnapshot();
 
-	expect(newMovieText.innerText).toBe("New Movie");
+  const submitBtn = getByText("Submit");
+
+  expect(submitBtn).toBeTruthy();
+  fireEvent.click(submitBtn);
 });
